@@ -75,3 +75,54 @@ This section includes links to the detailed documentation for the different API 
 This section describes the overall structure and organization of the project files and directories. 
 
 See [Project Structure](/.doc/project-structure.md)
+
+## Running the API
+
+The backend lives under `template/backend`, targets **.NET 8** and uses **PostgreSQL**.
+Both ways below apply the EF Core migrations automatically on startup.
+
+### Prerequisites
+- [.NET SDK 8.0+](https://dotnet.microsoft.com/download)
+- [Docker](https://www.docker.com/) (Docker Desktop on Windows/macOS)
+
+### Option 1 — .NET Aspire (recommended)
+The Aspire AppHost provisions the PostgreSQL container and injects its connection string
+into the API automatically.
+
+```bash
+cd template/backend
+dotnet dev-certs https --trust            # once, for the HTTPS profile
+dotnet run --project src/Ambev.DeveloperEvaluation.AppHost
+```
+
+The Aspire dashboard opens and the API starts with the database already connected.
+
+### Option 2 — Docker Compose
+Builds the API image and starts PostgreSQL.
+
+```bash
+cd template/backend
+docker compose up -d --build
+```
+
+The API is then available at `http://localhost:8080` and Swagger at `http://localhost:8080/swagger`.
+
+### Authentication
+All `/api/sales/*` endpoints require a JWT:
+
+1. `POST /api/users` to register a user (`status: 1`, `role: 1`; phone in E.164, e.g. `+5511987654321`).
+2. `POST /api/auth` with the e-mail and password — the response `data.token` is the bearer token.
+3. Send it as `Authorization: Bearer <token>`, or use the **Authorize** button in Swagger.
+
+### Tests
+```bash
+cd template/backend
+dotnet test                               # unit + integration + functional
+```
+
+The functional tests start a throwaway PostgreSQL container via Testcontainers and require
+Docker. To run only the suites that do not need Docker:
+
+```bash
+dotnet test --filter "Category!=Functional"
+```
