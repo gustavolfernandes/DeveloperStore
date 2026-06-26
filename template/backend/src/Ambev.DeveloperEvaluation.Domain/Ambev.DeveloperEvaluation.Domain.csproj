@@ -10,15 +10,13 @@
     <Folder Include="Exceptions\" />
     <Folder Include="Repositories\" />
     <Folder Include="Events\" />
+    <Folder Include="Security\" />
     <Folder Include="ValueObjects\" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="FluentValidation" Version="11.10.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Ambev.DeveloperEvaluation.Common\Ambev.DeveloperEvaluation.Common.csproj" />
+    <PackageReference Include="StronglyTypedId" Version="1.0.0-beta08" PrivateAssets="all" ExcludeAssets="runtime" />
   </ItemGroup>
 
 </Project>

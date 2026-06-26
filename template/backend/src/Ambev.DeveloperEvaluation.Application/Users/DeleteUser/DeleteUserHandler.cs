@@ -1,6 +1,7 @@
 using MediatR;
 using FluentValidation;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
+using Ambev.DeveloperEvaluation.Domain.ValueObjects;
 
 namespace Ambev.DeveloperEvaluation.Application.Users.DeleteUser;
 
@@ -36,7 +37,7 @@ public class DeleteUserHandler : IRequestHandler<DeleteUserCommand, DeleteUserRe
         if (!validationResult.IsValid)
             throw new ValidationException(validationResult.Errors);
 
-        var success = await _userRepository.DeleteAsync(request.Id, cancellationToken);
+        var success = await _userRepository.DeleteAsync(new UserId(request.Id), cancellationToken);
         if (!success)
             throw new KeyNotFoundException($"User with ID {request.Id} not found");
 
