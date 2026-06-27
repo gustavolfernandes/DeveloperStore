@@ -16,9 +16,10 @@
     <PackageReference Include="FluentValidation" Version="11.10.0" />
     <PackageReference Include="MediatR" Version="12.4.1" />
 
-    <!-- Authentication + API docs -->
+    <!-- Authentication + API docs (Swashbuckle generates the OpenAPI document; Scalar renders it) -->
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.10" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.8.1" />
+    <PackageReference Include="Scalar.AspNetCore" Version="2.16.6" />
 
     <!-- Health checks -->
     <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="8.0.10" />
