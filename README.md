@@ -98,14 +98,35 @@ dotnet run --project src/Ambev.DeveloperEvaluation.AppHost
 The Aspire dashboard opens and the API starts with the database already connected.
 
 ### Option 2 — Docker Compose
-Builds the API image and starts PostgreSQL.
+The database credentials are not committed in plaintext; only an AES-256-encrypted file
+(`secrets/db.env.enc`) is versioned. Decrypt it into a local `.env` (git-ignored) before
+starting the stack:
 
 ```bash
 cd template/backend
+openssl enc -d -aes-256-cbc -pbkdf2 -a -in secrets/db.env.enc -out .env -pass pass:developer-evaluation-demo
 docker compose up -d --build
 ```
 
 The API is then available at `http://localhost:8080` and Swagger at `http://localhost:8080/swagger`.
+
+#### How the secrets are handled
+`docker-compose.yml` references the credentials through variables (`${POSTGRES_PASSWORD}`, …)
+that Docker Compose reads from the decrypted `.env`; the API receives the connection string the
+same way. The committed `secrets/db.env.enc` is just the `.env` encrypted with OpenSSL:
+
+```bash
+# Encrypt (after editing .env)
+openssl enc -aes-256-cbc -pbkdf2 -salt -a -in .env -out secrets/db.env.enc -pass pass:developer-evaluation-demo
+
+# Decrypt ("break" it open to run)
+openssl enc -d -aes-256-cbc -pbkdf2 -a -in secrets/db.env.enc -out .env -pass pass:developer-evaluation-demo
+```
+
+> Keeping the passphrase in this README makes the encryption a demonstration of the technique,
+> not real protection — anyone with the repository can decrypt it. In a real deployment the
+> passphrase/key lives outside the repository (a secrets manager or KMS) and only the encrypted
+> file is committed.
 
 ### Authentication
 All `/api/sales/*` endpoints require a JWT:

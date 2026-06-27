@@ -5,6 +5,9 @@
 # Especific Folders
 .[eE]ng/[dD]ata/
 
+# Local secrets: the plaintext .env is decrypted from secrets/*.enc and must never be committed
+.env
+
 # User-specific files
 *.rsuser
 *.suo
