@@ -108,7 +108,7 @@ openssl enc -d -aes-256-cbc -pbkdf2 -a -in secrets/db.env.enc -out .env -pass pa
 docker compose up -d --build
 ```
 
-The API is then available at `http://localhost:8080` and Swagger at `http://localhost:8080/swagger`.
+The API is then available at `http://localhost:8080` and the Scalar API reference at `http://localhost:8080/scalar/v1`.
 
 #### How the secrets are handled
 `docker-compose.yml` references the credentials through variables (`${POSTGRES_PASSWORD}`, …)
@@ -133,7 +133,7 @@ All `/api/sales/*` endpoints require a JWT:
 
 1. `POST /api/users` to register a user (`status: 1`, `role: 1`; phone in E.164, e.g. `+5511987654321`).
 2. `POST /api/auth` with the e-mail and password — the response `data.token` is the bearer token.
-3. Send it as `Authorization: Bearer <token>`, or use the **Authorize** button in Swagger.
+3. Send it as `Authorization: Bearer <token>`, or use the **Authorize** button in the Scalar API reference.
 
 ### Tests
 ```bash

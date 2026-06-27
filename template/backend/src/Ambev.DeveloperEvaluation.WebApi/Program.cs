@@ -5,6 +5,7 @@ using Ambev.DeveloperEvaluation.WebApi.Extensions;
 using Ambev.DeveloperEvaluation.WebApi.Middleware;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Scalar.AspNetCore;
 using Serilog;
 
 namespace Ambev.DeveloperEvaluation.WebApi;
@@ -39,7 +40,12 @@ public class Program
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
-                app.UseSwaggerUI();
+                app.MapScalarApiReference(options =>
+                {
+                    options
+                        .WithTitle("Ambev Developer Evaluation API")
+                        .WithOpenApiRoutePattern("/swagger/{documentName}/swagger.json");
+                });
             }
 
             app.UseHttpsRedirection();
@@ -67,8 +73,8 @@ public class Program
     }
 
     /// <summary>
-    /// Adds a JWT Bearer security definition to Swagger so protected endpoints can be
-    /// called from the Swagger UI using the "Authorize" button.
+    /// Adds a JWT Bearer security definition to the OpenAPI document so protected endpoints
+    /// can be called from the API reference using the "Authorize" button.
     /// </summary>
     private static void ConfigureSwaggerAuth(Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions options)
     {
