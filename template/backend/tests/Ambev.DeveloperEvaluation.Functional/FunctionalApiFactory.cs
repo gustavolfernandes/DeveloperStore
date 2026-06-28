@@ -14,15 +14,18 @@ namespace Ambev.DeveloperEvaluation.Functional;
 /// </summary>
 public sealed class FunctionalApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
-    private readonly PostgreSqlContainer _database = new PostgreSqlBuilder()
-        .WithImage("postgres:13")
-        .Build();
+    private PostgreSqlContainer? _database;
 
     /// <summary>
     /// Whether a Docker daemon was reachable to start the database container. When false the
     /// functional tests skip themselves instead of failing.
     /// </summary>
     public bool DockerAvailable { get; private set; }
+
+    public FunctionalApiFactory()
+    {
+        Environment.SetEnvironmentVariable("Jwt__SecretKey", "functional-tests-signing-key-not-used-anywhere-else");
+    }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
@@ -31,7 +34,7 @@ public sealed class FunctionalApiFactory : WebApplicationFactory<Program>, IAsyn
         {
             configuration.AddInMemoryCollection(new Dictionary<string, string?>
             {
-                ["ConnectionStrings:DefaultConnection"] = _database.GetConnectionString()
+                ["ConnectionStrings:DefaultConnection"] = _database!.GetConnectionString()
             });
         });
     }
@@ -40,6 +43,7 @@ public sealed class FunctionalApiFactory : WebApplicationFactory<Program>, IAsyn
     {
         try
         {
+            _database = new PostgreSqlBuilder().WithImage("postgres:13").Build();
             await _database.StartAsync();
             DockerAvailable = true;
         }
@@ -51,7 +55,8 @@ public sealed class FunctionalApiFactory : WebApplicationFactory<Program>, IAsyn
 
     async Task IAsyncLifetime.DisposeAsync()
     {
-        await _database.DisposeAsync();
+        if (_database is not null)
+            await _database.DisposeAsync();
         await base.DisposeAsync();
     }
 }

@@ -133,9 +133,7 @@ public sealed class SalesFunctionalTests : IClassFixture<FunctionalApiFactory>
             username = "FunctionalUser",
             email,
             phone = "+5511987654321",
-            password,
-            status = 1,
-            role = 1
+            password
         });
         registration.StatusCode.Should().Be(HttpStatusCode.Created);
 

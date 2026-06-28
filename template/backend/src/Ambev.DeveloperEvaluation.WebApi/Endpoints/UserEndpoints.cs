@@ -1,6 +1,7 @@
 using Ambev.DeveloperEvaluation.Application.Users.CreateUser;
 using Ambev.DeveloperEvaluation.Application.Users.DeleteUser;
 using Ambev.DeveloperEvaluation.Application.Users.GetUser;
+using Ambev.DeveloperEvaluation.Domain.Enums;
 using Ambev.DeveloperEvaluation.WebApi.Common;
 using Ambev.DeveloperEvaluation.WebApi.Features.Users.CreateUser;
 using Ambev.DeveloperEvaluation.WebApi.Features.Users.GetUser;
@@ -54,6 +55,8 @@ public static class UserEndpoints
             return Results.BadRequest(validation.ToApiResponse());
 
         var command = mapper.Map<CreateUserCommand>(request);
+        command.Role = UserRole.Customer;
+        command.Status = UserStatus.Active;
         var result = await mediator.Send(command, cancellationToken);
         var data = mapper.Map<CreateUserResponse>(result);
 
