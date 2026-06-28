@@ -112,8 +112,11 @@ The API is then available at `http://localhost:8080` and the Scalar API referenc
 
 #### How the secrets are handled
 `docker-compose.yml` references the credentials through variables (`${POSTGRES_PASSWORD}`, …)
-that Docker Compose reads from the decrypted `.env`; the API receives the connection string the
-same way. The committed `secrets/db.env.enc` is just the `.env` encrypted with OpenSSL:
+that Docker Compose reads from the decrypted `.env`; the API receives both the connection string
+and the JWT signing key (`Jwt__SecretKey`) the same way. The base `appsettings.json` ships
+**without** a JWT signing key — `appsettings.Development.json` carries a development-only key so
+local runs and tests work out of the box. The committed `secrets/db.env.enc` is just the `.env`
+encrypted with OpenSSL:
 
 ```bash
 # Encrypt (after editing .env)
@@ -124,14 +127,15 @@ openssl enc -d -aes-256-cbc -pbkdf2 -a -in secrets/db.env.enc -out .env -pass pa
 ```
 
 > Keeping the passphrase in this README makes the encryption a demonstration of the technique,
-> not real protection — anyone with the repository can decrypt it. In a real deployment the
-> passphrase/key lives outside the repository (a secrets manager or KMS) and only the encrypted
-> file is committed.
+> not real protection — anyone with the repository can decrypt it. In a real deployment the DB
+> credentials and the JWT signing key live outside the repository — in a secrets manager / KMS
+> (e.g. Azure Key Vault, AWS Secrets Manager, HashiCorp Vault) — and only the encrypted file is
+> committed.
 
 ### Authentication
 All `/api/sales/*` endpoints require a JWT:
 
-1. `POST /api/users` to register a user (`status: 1`, `role: 1`; phone in E.164, e.g. `+5511987654321`).
+1. `POST /api/users` to register a user (phone in E.164, e.g. `+5511987654321`). New accounts are created as an active **Customer**; role and status are assigned by the server, not by the request.
 2. `POST /api/auth` with the e-mail and password — the response `data.token` is the bearer token.
 3. Send it as `Authorization: Bearer <token>`, or use the **Authorize** button in the Scalar API reference.
 
