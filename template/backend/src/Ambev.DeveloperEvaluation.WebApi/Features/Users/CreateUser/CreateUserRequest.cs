@@ -1,6 +1,4 @@
-﻿using Ambev.DeveloperEvaluation.Domain.Enums;
-
-namespace Ambev.DeveloperEvaluation.WebApi.Features.Users.CreateUser;
+﻿namespace Ambev.DeveloperEvaluation.WebApi.Features.Users.CreateUser;
 
 /// <summary>
 /// Represents a request to create a new user in the system.
@@ -26,14 +24,4 @@ public class CreateUserRequest
     /// Gets or sets the email address. Must be a valid email format.
     /// </summary>
     public string Email { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Gets or sets the initial status of the user account.
-    /// </summary>
-    public UserStatus Status { get; set; }
-
-    /// <summary>
-    /// Gets or sets the role assigned to the user.
-    /// </summary>
-    public UserRole Role { get; set; }
 }
